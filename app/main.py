@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.v1.router import api_router
 from app.core.config import settings
 
 
@@ -10,18 +11,17 @@ app = FastAPI(
 )
 
 
-@app.get("/")
+@app.get("/", tags=["System"])
 def root():
     return {
-        "message": f"{settings.app_name} API",
+        "name": settings.app_name,
         "status": "running",
-        "version": settings.app_version
+        "version": settings.app_version,
+        "docs": "/docs"
     }
 
 
-@app.get("/health")
-def health_check():
-    return {
-        "status": "healthy",
-        "environment": settings.app_env
-    }
+app.include_router(
+    api_router,
+    prefix="/api/v1"
+)
